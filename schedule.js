@@ -1,5 +1,6 @@
 const { response } = require('express');
 const express = require('express');
+const router = express.Router();
 const Joi = require('joi');
 const app = express();
 
@@ -16,23 +17,26 @@ const courses = [
 //frontend
 app.use('/', express.static('static'));
 
+//console log for requests
 app.use(function (req, res, next) {
   console.log(`${req.method} request for ${req.url}`);
   next();
 })
  
-app.get('/api/courses', function (req, res) {
+//get all courses
+router.get('/', function (req, res) {
   res.send(courses);
 })
 
-app.get('/api/courses/:id', function (req, res) {
+//get course using id
+router.get('/:id', function (req, res) {
   const course = courses.find(c => c.id === parseInt(req.params.id));
   if(!course) return res.status(404).send('Course not found');
   res.send(course);
 });
 
-app.post('/api/courses', function (req, res) {
-  //const result = validateCourse(req.body);
+//post course
+router.post('/', function (req, res) {
   const { error } = validateCourse(req.body); //result.error
 
   if(error) return res.status(400).send(result.error.details[0].message);
@@ -45,12 +49,19 @@ app.post('/api/courses', function (req, res) {
   res.send(course);
 })
 
-app.put('/api/courses/:id', function (req, res) {
+//put method using id
+router.put('/:id', function (req, res) {
   const course = courses.find(c => c.id === parseInt(req.params.id));
-  if(!course) return res.status(404).send('Course not found');
-    
+  if(!course){
+    const course = {
+      id: parseInt(req.params.id), 
+      name: req.body.name
+    }
+    courses.push(course);
+    res.send(course);
+    return;
+  }
   
-
   const result = validateCourse(req.body);
   const { error } = validateCourse(req.body); //result.error
 
@@ -60,7 +71,8 @@ app.put('/api/courses/:id', function (req, res) {
   res.send(course);
 })
 
-app.delete('/api/courses/:id', function (req, res) {
+//delete method using id
+router.delete('/:id', function (req, res) {
   const course = courses.find(c => c.id === parseInt(req.params.id));
   if(!course) return res.status(404).send('Course not found');
   
@@ -70,6 +82,7 @@ app.delete('/api/courses/:id', function (req, res) {
   res.send(course);
 });
 
+//used for input sanitization
 function validateCourse(course){
   const schema = {
     name: Joi.string().min(3).required()
@@ -78,6 +91,11 @@ function validateCourse(course){
   return result = Joi.validate(course, schema);
 }
 
+//router
+app.use('/api/courses', router);
+
+
+//port listener
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
