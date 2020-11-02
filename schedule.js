@@ -1,18 +1,17 @@
 const { response } = require('express');
 const express = require('express');
 const router = express.Router();
+const data = require("./Lab3-timetable-data.json");
 const Joi = require('joi');
 const app = express();
 
 app.use(express.json());
 
 const port = process.env.Port || 3000;
- 
-const courses = [
-  {id:1,name:'course1'},
-  {id:2,name:'course2'},
-  {id:3,name:'course3'}
-];
+
+//makes courses with json file
+var newData = JSON.stringify(data)
+const courses = JSON.parse(newData);
 
 //frontend
 app.use('/', express.static('static'));
