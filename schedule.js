@@ -22,16 +22,27 @@ app.use(function (req, res, next) {
   next();
 })
  
-//get all courses
+//get all subject codes and descriptions
 router.get('/', function (req, res) {
-  res.send(courses);
+  const result = [];
+  for(course of courses){
+    result.push(course.subject,course.className);
+  }
+  res.send(result);
 })
 
-//get course using id
+//get course using subject code
 router.get('/:id', function (req, res) {
-  const course = courses.find(c => c.id === parseInt(req.params.id));
-  if(!course) return res.status(404).send('Course not found');
-  res.send(course);
+  //const course = courses.find(c => c.subject === req.params.class_nbr);
+  //if(!course) return res.status(404).send('Course not found');
+  const result = [];
+  for(course of courses){
+    if(course.subject==req.params.id){
+      result.push(course.catalog_nbr);
+    }
+  }
+  //courses.filter(course => course.subject.indexOf(req.params.id) !== -1);
+  res.send(result);
 });
 
 //post course
