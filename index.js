@@ -13,8 +13,12 @@ const courses = [
   {id:3,name:'course3'}
 ];
 
-app.get('/', function (req, res) {
-  res.send('Hello World');
+//frontend
+app.use('/', express.static('static'));
+
+app.use(function (req, res, next) {
+  console.log(`${req.method} request for ${req.url}`);
+  next();
 })
  
 app.get('/api/courses', function (req, res) {
