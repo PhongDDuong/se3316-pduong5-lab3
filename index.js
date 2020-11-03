@@ -42,9 +42,10 @@ app.get('/api/schedule', (req, res) => {
   res.send(result);
 });
 
-
 app.get('/api/schedule/:id', (req, res) => {
-  res.send(store.get(req.params.id));
+  const result = [];
+  result.push(store.get(req.params.id))
+  res.send(result);
 });
 
 //put schedules

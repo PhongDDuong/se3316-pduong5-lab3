@@ -91,7 +91,7 @@ function displaySchedule(){
         const option = document.createElement('p');
         option.appendChild(document.createTextNode(data));
         l.appendChild(option);
-        newCourses.push(data);
+        //newCourses.push(data);
     });
 }
 
@@ -139,7 +139,6 @@ function addCourse(){
     })
     )*/
     console.log("pls")
-    displaySchedule();
 }
 
 
