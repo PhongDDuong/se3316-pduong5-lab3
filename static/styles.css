@@ -6,3 +6,25 @@ body{
 .admin{
     background-color: grey;
 }
+table, th, td {
+    background: white;
+    border: 1px solid black;
+    border-collapse: collapse;
+    color: black;
+    margin: 0;
+    width: 50%;
+    height: 20px;
+
+  }
+table{
+    width: 100%;
+}
+
+ol{
+    background-color: lightgrey;
+    color: black;
+}
+div{
+    text-align: right;
+    height: 50px;
+}

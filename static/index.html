@@ -9,10 +9,16 @@
     </head>
     <body>
         <h1>Schedule Maker</h1>
-        <div class = "intro">
-            <h2>Courses<button id="get-courses">Reload</button></h2>
+            <div>
+                <span>
+                    subject: <input type="text" id ="subject">
+                    Course code: <input type="text" id ="catalog_nbr">
+                    Course component: <input type="text" placeholder="Optional" id ="ssr_component">
+                    <button id="search-courses">Search</button>
+                </span>
+            </div>
+            <h2>Search results</h2>
             <ol id="courses"></ol>
-        </div>
 
         <div class="admin">
             <h2>Manage Courses</h2>
