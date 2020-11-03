@@ -1,6 +1,6 @@
 const { response } = require('express');
 const express = require('express');
-const router = express.Router();
+var router = express.Router();
 const data = require("./Lab3-timetable-data.json");
 const Joi = require('joi');
 const app = express();
@@ -8,6 +8,7 @@ const app = express();
 app.use(express.json());
 
 const port = process.env.Port || 3000;
+
 
 //makes courses with json file
 var newData = JSON.stringify(data)
@@ -21,36 +22,18 @@ app.use(function (req, res, next) {
   console.log(`${req.method} request for ${req.url}`);
   next();
 })
- 
-//get all subject codes and descriptions
-router.get('/', function (req, res) {
-  const result = [];
-  for(course of courses){
-    result.push(course.subject,course.className);
-  }
-  res.send(result);
-})
 
-//get course using subject code
-router.get('/:id', function (req, res) {
-  //const course = courses.find(c => c.subject === req.params.class_nbr);
-  //if(!course) return res.status(404).send('Course not found');
-  const result = [];
-  for(course of courses){
-    if(course.subject==req.params.id){
-      result.push(course.catalog_nbr);
-    }
-  }
-  //courses.filter(course => course.subject.indexOf(req.params.id) !== -1);
-  res.send(result);
+//get all courses
+router.get('/', (req, res) => {
+  res.send(courses);
 });
 
-//post course
+//add new part
 router.post('/', function (req, res) {
   const { error } = validateCourse(req.body); //result.error
 
   if(error) return res.status(400).send(result.error.details[0].message);
-
+  
   const course = {
     id: courses.length + 1, 
     name: req.body.name
@@ -58,6 +41,16 @@ router.post('/', function (req, res) {
   courses.push(course);
   res.send(course);
 })
+
+//get one course using id
+router.get('/:id', function (req, res) {
+
+  const course = courses.find(c => c.id === parseInt(req.params.id));
+  if(!course) return res.status(404).send('Course not found');
+  
+  //courses.filter(course => course.subject.indexOf(req.params.id) !== -1);
+  res.send(course);
+});
 
 //put method using id
 router.put('/:id', function (req, res) {
@@ -109,3 +102,37 @@ app.use('/api/courses', router);
 app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
+
+//get all subject codes and descriptions
+/*router.get('/', function (req, res) {
+  const result = [];
+  for(course of courses){
+    result.push(course.subject,course.className);
+  }
+  res.send(result);
+})*/
+//get course using subject code
+/*router.get('/:id', function (req, res) {
+  //const course = courses.find(c => c.subject === req.params.class_nbr);
+  //if(!course) return res.status(404).send('Course not found');
+  const result = [];
+  for(course of courses){
+    if(course.subject==req.params.id){
+      result.push(course.catalog_nbr);
+    }
+  }
+  //courses.filter(course => course.subject.indexOf(req.params.id) !== -1);
+  res.send(result);
+});*/
+
+/*router.get('/:id/:id2', function (req, res) {
+  //const course = courses.find(c => c.subject === req.params.class_nbr);
+  //if(!course) return res.status(404).send('Course not found');
+  const result = [];
+  for(course of courses){
+    if(course.subject==req.params.id && course.catalog_nbr==req.params.id2){
+      result.push(course.course_info.start_time);
+    }
+  }
+  res.send(result);
+});*/

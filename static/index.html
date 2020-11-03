@@ -6,9 +6,24 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="stylesheet" href="styles.css">
-        <script src="schedule.js"></script>
     </head>
     <body>
         <h1>Schedule Maker</h1>
+        <div class = "intro">
+            <h2>Courses<button id="get-courses">Reload</button></h2>
+            <ol id="courses"></ol>
+        </div>
+
+        <div class="admin">
+            <h2>Manage Courses</h2>
+            <span>
+                id: <input type="text" id ="id">
+                name: <input type="text" id ="name">
+                <button id="add-courses">Add</button>
+            </span>
+            <span id="status"></span>
+        </div>
+
+        <script defer src="schedule.js"></script>
     </body>
 </html>
