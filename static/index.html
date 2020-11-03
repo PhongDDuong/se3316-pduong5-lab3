@@ -11,6 +11,27 @@
         <h1>Schedule Maker</h1>
             <div>
                 <span>
+                    Create Schedule: <input type="text" id ="schedule-name">
+                    <button id="schedule-create">create</button>
+                    Schedule:
+                    <select name=schedules id ="schedules" onchange="displaySchedule()">
+                        <option>Select Schedule</option>
+                    </select>
+                    <button id="schedule-display">Display</button>
+                    <button id="schedule-delete">Delete</button>
+                    <button id="schedule-delete-all">Delete All</button>
+                </span>
+            </div>
+            <div>
+                subject: <input type="text" id ="courseSubject">
+                Course code: <input type="text" id ="courseCatalog_nbr">
+                <button id="add-course">Add Course</button>
+            </div>
+            <h2>Classes in Schedule</h2>
+            <ol id="schedule-area"></ol>
+
+            <div>
+                <span>
                     subject: <input type="text" id ="subject">
                     Course code: <input type="text" id ="catalog_nbr">
                     Course component: <input type="text" placeholder="Optional" id ="ssr_component">
@@ -19,7 +40,7 @@
             </div>
             <h2>Search results</h2>
             <ol id="courses"></ol>
-
+        <!--
         <div class="admin">
             <h2>Manage Courses</h2>
             <span>
@@ -29,6 +50,7 @@
             </span>
             <span id="status"></span>
         </div>
+        -->
 
         <script defer src="schedule.js"></script>
     </body>
