@@ -115,8 +115,8 @@ router.get('/', (req, res) => {
 function validateSchedule(schedule){
   const schema = {
     schedule: Joi.string().required().min(1).max(20),
-    subject: Joi.string().required(),
-    catalog_nbr: Joi.string().required(),
+    subject: Joi.string().alphanum().required(),
+    catalog_nbr: Joi.string().alphanum().required(),
   };
 
   return result = Joi.validate(schedule, schema);
