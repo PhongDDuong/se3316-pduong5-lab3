@@ -1,3 +1,4 @@
+//button listeners
 document.getElementById('search-courses').addEventListener('click', courseSearch);
 document.getElementById('schedule-create').addEventListener('click', makeSchedule);
 document.getElementById('schedule-delete').addEventListener('click', deleteSchedule);
@@ -7,12 +8,11 @@ document.getElementById('add-course').addEventListener('click', addCourse);
 
 getCourses();
 getSchedule();
-//displaySchedule();
 
 var newCourses = [];
 const scheduleNames = [];
 
-function getCourses(){
+function getCourses(){//populates with courses from json file
     clearArea("courses");
 
     fetch("/api/courses")
@@ -45,7 +45,7 @@ function getCourses(){
     )
 }
 
-function getSchedule(){
+function getSchedule(){//populates choice drop down with availible schedules
 
     clearArea("schedules");
 
@@ -74,7 +74,7 @@ function getSchedule(){
     })
 }
 
-function makeSchedule(){
+function makeSchedule(){//creates a schedule
     const l = document.getElementById('schedule-name').value;
     if(!(scheduleNames[0].includes(document.getElementById('schedule-name').value)) && document.getElementById('schedule-name').value!=="" ){
         scheduleNames[0].push(document.getElementById('schedule-name').value);
@@ -88,7 +88,7 @@ function makeSchedule(){
     }
 }
 
-function updateSchedule(name){
+function updateSchedule(name){//updates or overwrites a schedule
     const l = document.getElementById('schedules').value;
     fetch('/api/schedule/'+ l+'/'+newCourses, {
         method: 'PUT',
@@ -96,7 +96,7 @@ function updateSchedule(name){
     displaySchedule()
 }
 
-function displaySchedule(){
+function displaySchedule(){//shows the courses stored in a schedule
     clearArea('schedule-area');
     const l = document.getElementById('schedules').value;
     fetch('/api/schedule/'+ l, {
@@ -125,7 +125,7 @@ function displaySchedule(){
 }
 
 
-function deleteSchedule(){
+function deleteSchedule(){//removes a schedule
     const l = document.getElementById('schedules').value;
     if(document.getElementById('schedules').value!="No Schedules"){
         fetch('/api/schedule/'+ l, {
@@ -141,7 +141,7 @@ function deleteSchedule(){
     displaySchedule()
 }
 
-function deleteAllSchedules(){
+function deleteAllSchedules(){//removes all schedules stored
     const l = document.getElementById('schedules');
     console.log(l.value)
     fetch('/api/schedule/' , {
@@ -151,7 +151,7 @@ function deleteAllSchedules(){
     displaySchedule()
 }
 
-function addCourse(){
+function addCourse(){//add a valid course to the current schedule
     if(document.getElementById('schedules').value!="No Schedules"){
         fetch("/api/courses")
         .then(res => res.json()
@@ -180,12 +180,12 @@ function addCourse(){
 
 
 
-function clearArea(area){
+function clearArea(area){//empties section of given location
     const node= document.getElementById(area);
     node.querySelectorAll('*').forEach(n => n.remove());
 }
 
-function courseSearch(){
+function courseSearch(){//searches through the courses when given certain parameters
     var found = false;
 
     clearArea("courses");

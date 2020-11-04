@@ -1,7 +1,7 @@
 const express = require('express');
 var router = express.Router();
-const data = require("./Lab3-timetable-data.json");
-const Storage = require('node-storage');
+const data = require("./Lab3-timetable-data.json");//json file containing courses
+const Storage = require('node-storage');//backend storage
 const Joi = require('joi');
 const app = express();
 
@@ -9,7 +9,7 @@ app.use(express.json());
 
 var store = new Storage('schedule');
 
-const port = process.env.Port || 3000;
+const port = process.env.Port || 3000;//port number
 
 
 //makes courses with json file
@@ -35,6 +35,7 @@ app.get('/api/schedule', (req, res) => {
   res.send(result);
 });
 
+//get courses of a schedule when given a name
 app.get('/api/schedule/:id', (req, res) => {
   const result = [];
   result.push(store.get(req.params.id))
@@ -50,6 +51,7 @@ app.put('/api/schedule/:id', (req, res) => {
   res.send(schedules);
 });
 
+//adds courses to schedule
 app.put('/api/schedule/:id/:id2', (req, res) => {
   store.put(req.params.id,req.params.id2);
 
@@ -58,6 +60,7 @@ app.put('/api/schedule/:id/:id2', (req, res) => {
   res.send(schedules);
 });
 
+//delete all schedules
 app.delete('/api/schedule/', function (req, res) {
 
   for(schedule in store.store) {
@@ -67,6 +70,7 @@ app.delete('/api/schedule/', function (req, res) {
   res.send("deleted");
 });
 
+//delete a schedule when given its name
 app.delete('/api/schedule/:id', function (req, res) {
 
   store.remove(req.params.id);
