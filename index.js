@@ -32,6 +32,7 @@ app.get('/api/schedule', (req, res) => {
   for(schedule in store.store) {
     result.push(schedule);
   }
+  console.log(result);
   res.send(result);
 });
 
@@ -42,49 +43,105 @@ app.get('/api/schedule/:id', (req, res) => {
   res.send(result);
 });
 
-//put schedules
-app.put('/api/schedule/:id', (req, res) => {
-  store.put(req.params.id,"");
+//add course to schedule
+app.post('/api/schedule/create', function (req, res) {
+  const { error } = validateSchedule(req.body); //result.error
+  if(error) return res.status(400).send(result.error.details[0].message);
+  
+  const schedule = {
+    schedule: req.body.schedule,
+    subject: req.body.subject,
+    catalog_nbr: req.body.catalog_nbr,
+  }
+  //courses.push(course);
+  store.put(schedule.schedule,schedule);
+  res.send(schedule);
+})
 
-  var newData = JSON.stringify(store.store)
-  const schedules = [JSON.parse(newData)];
-  res.send(schedules);
-});
+//add course to schedule
+app.post('/api/schedule/', function (req, res) {
+  const { error } = validateSchedule(req.body); //result.error
+  if(error) return res.status(400).send(result.error.details[0].message);
+  
+  
+  if(store.get(req.body.schedule).subject!==" "){
+    var schedule = {
+      schedule: req.body.schedule,
+      subject: store.get(req.body.schedule).subject+","+req.body.subject,
+      catalog_nbr: store.get(req.body.schedule).catalog_nbr+","+req.body.catalog_nbr,
+    }
+  }
+  else{
+    var schedule = {
+      schedule: req.body.schedule,
+      subject: req.body.subject,
+      catalog_nbr: req.body.catalog_nbr,
+    }
+  }
 
-//adds courses to schedule
-app.put('/api/schedule/:id/:id2', (req, res) => {
-  store.put(req.params.id,req.params.id2);
+  //courses.push(course);
+  store.put(schedule.schedule,schedule);
+  res.send(schedule);
+})
 
-  var newData = JSON.stringify(store.store)
-  const schedules = [JSON.parse(newData)];
-  res.send(schedules);
-});
+
 
 //delete all schedules
-app.delete('/api/schedule/', function (req, res) {
-
+app.delete('/api/schedule/all', function (req, res) {
   for(schedule in store.store) {
     store.remove(schedule);
   }
-
   res.send("deleted");
 });
 
 //delete a schedule when given its name
-app.delete('/api/schedule/:id', function (req, res) {
+app.delete('/api/schedule/', function (req, res) {
+  const { error } = validateInput(req.body); //result.error
 
-  store.remove(req.params.id);
+  if(error) return res.status(400).send(result.error.details[0].message);
+
+  store.remove(req.body.input);
 
   res.send("deleted");
 });
-
-
 
 //get all courses
 router.get('/', (req, res) => {
   res.send(courses);
 });
 
+
+//used for input sanitization
+function validateSchedule(schedule){
+  const schema = {
+    schedule: Joi.string().required().min(1).max(20),
+    subject: Joi.string().required(),
+    catalog_nbr: Joi.string().required(),
+  };
+
+  return result = Joi.validate(schedule, schema);
+}
+
+//input validation
+function validateInput(course){
+  const schema = {
+    input: Joi.string().alphanum().min(1).max(20).required()
+  };
+
+  return result = Joi.validate(course, schema);
+}
+
+//router
+app.use('/api/courses', router);
+
+
+//port listener
+app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+});
+
+//unused methods
+/*
 //add new course
 router.post('/', function (req, res) {
   const { error } = validateCourse(req.body); //result.error
@@ -98,6 +155,7 @@ router.post('/', function (req, res) {
   courses.push(course);
   res.send(course);
 })
+
 
 //get one course using id
 router.get('/:id', function (req, res) {
@@ -140,22 +198,4 @@ router.delete('/:id', function (req, res) {
   courses.splice(index,1);
 
   res.send(course);
-});
-
-//used for input sanitization
-function validateCourse(course){
-  const schema = {
-    name: Joi.string().min(3).required()
-  };
-
-  return result = Joi.validate(course, schema);
-}
-
-//router
-app.use('/api/courses', router);
-
-
-//port listener
-app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
-});
+});*/

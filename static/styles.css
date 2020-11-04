@@ -3,9 +3,22 @@ body{
     color: white;
     
 }
+h1 { color: white; font-family: 'Helvetica Neue', sans-serif; font-size: 50px; font-weight: bold; letter-spacing: -1px; line-height: 1; text-align: center; }
 .admin{
     background-color: grey;
 }
+#schedule-area {
+    border-radius: 25px;
+    border: 2px solid black;
+    padding: 20px;
+}
+
+#courses {
+    border-radius: 25px;
+    border: 2px solid black;
+    padding: 20px;
+}
+
 table, th, td {
     border: 1px solid black;
     border-collapse: collapse;

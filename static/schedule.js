@@ -3,14 +3,13 @@ document.getElementById('search-courses').addEventListener('click', courseSearch
 document.getElementById('schedule-create').addEventListener('click', makeSchedule);
 document.getElementById('schedule-delete').addEventListener('click', deleteSchedule);
 document.getElementById('schedule-delete-all').addEventListener('click', deleteAllSchedules);
-document.getElementById('add-course').addEventListener('click', addCourse);
+document.getElementById('add-course').addEventListener('click', checkCourse);
 
 
 getCourses();
-getSchedule();
-
-var newCourses = [];
-const scheduleNames = [];
+getSchedule()
+//displaySchedule();
+var scheduleNames = [];
 
 function getCourses(){//populates with courses from json file
     clearArea("courses");
@@ -18,26 +17,26 @@ function getCourses(){//populates with courses from json file
     fetch("/api/courses")
     .then(res => res.json()
     .then(data => {
-        const l = document.getElementById('courses');
+        const location = document.getElementById('courses');
         data.forEach(e => {
             const table = document.createElement('table');
             const row = document.createElement('tr');
             const cell = document.createElement('td');
 
-            cell.appendChild(document.createTextNode(`${e.subject}`))
+            cell.appendChild(document.createTextNode(`${e.subject}`));
 
-            row.appendChild(cell)
+            row.appendChild(cell);
             const cell2 = document.createElement('td');
 
-            cell2.appendChild(document.createTextNode(`${e.className}`))
+            cell2.appendChild(document.createTextNode(`${e.className}`));
 
-            row.appendChild(cell2)
-            table.appendChild(row)
-            l.appendChild(table);
-            if(e.course_info[0].ssr_component=="LAB"){
+            row.appendChild(cell2);
+            table.appendChild(row);
+            location.appendChild(table);
+            if(e.course_info[0].ssr_component=="LAB"){//colors labs
                 table.id = "lab";
             }
-            if(e.course_info[0].ssr_component=="TUT"){
+            if(e.course_info[0].ssr_component=="TUT"){//colours tutorials
                 table.id = "tut";
             }
         })
@@ -46,12 +45,13 @@ function getCourses(){//populates with courses from json file
 }
 
 function getSchedule(){//populates choice drop down with availible schedules
-
+    
     clearArea("schedules");
 
-    fetch('/api/schedule').then(res => res.json())
+    fetch('/api/schedule')
+    .then(res => res.json())
     .then(data => {
-        scheduleNames.push(data);
+        scheduleNames=data;
         const l = document.getElementById('schedules');
         var empty = true;
 
@@ -61,7 +61,6 @@ function getSchedule(){//populates choice drop down with availible schedules
             option.value = e;
             l.appendChild(option);
             empty = false;
-            
         })
         if(empty){
             const l = document.getElementById('schedules');
@@ -70,88 +69,123 @@ function getSchedule(){//populates choice drop down with availible schedules
             option.value ="No Schedules";
             l.appendChild(option)
         }
-        
     })
-}
-
-function makeSchedule(){//creates a schedule
-    const l = document.getElementById('schedule-name').value;
-    if(!(scheduleNames[0].includes(document.getElementById('schedule-name').value)) && document.getElementById('schedule-name').value!=="" ){
-        scheduleNames[0].push(document.getElementById('schedule-name').value);
-        fetch('/api/schedule/'+ l, {
-            method: 'PUT',
-        })
-        getSchedule();
-    }
-    else{
-        alert("schedule already exists or nothing was entered");
-    }
-}
-
-function updateSchedule(name){//updates or overwrites a schedule
-    const l = document.getElementById('schedules').value;
-    fetch('/api/schedule/'+ l+'/'+newCourses, {
-        method: 'PUT',
-    })
-    displaySchedule()
 }
 
 function displaySchedule(){//shows the courses stored in a schedule
     clearArea('schedule-area');
-    const l = document.getElementById('schedules').value;
-    fetch('/api/schedule/'+ l, {
+    var empty = true;
+
+    const schedule = document.getElementById('schedules').value;
+
+    fetch('/api/schedule/'+ schedule, {
         method: 'GET',
     })
     .then(res =>  res.json())
     .then(data => {
-        const l = document.getElementById('schedule-area');
-        const ol1 = document.createElement('ol');
-        newCourses = [];
-        if(data!=""){
-            newCourses.push(data);
-        }
-        const courseNum = document.createElement('p');
-        courseNum.appendChild(document.createTextNode("Contains "+newCourses[0][0].split(",").length/2 +" courses"));
-        ol1.appendChild(courseNum)
+        const subtitle = document.getElementById('subtitle');
+        const location = document.getElementById('schedule-area');
+        if(data[0].subject!==" "){
+            location.hidden = false;
+            subtitle.hidden = false;
+            var subjects = data[0].subject.split(",");
+            var catalogNum = data[0].catalog_nbr.split(",");
 
-        for(i=0;i<newCourses[0][0].split(",").length;i+=2){
-            const option = document.createElement('p');
-            option.appendChild(document.createTextNode(newCourses[0][0].split(",")[i]+", "+newCourses[0][0].split(",")[i+1]));
-            ol1.appendChild(option)
-        }
+            const ol = document.createElement('ol');
+            const courseNum = document.createElement('p');
+            courseNum.appendChild(document.createTextNode("Contains "+ subjects.length +" courses"));
+            ol.appendChild(courseNum)
+            
+            for(i = 0 ; i< subjects.length ; i++){
+                const option = document.createElement('p');
+                option.appendChild(document.createTextNode(subjects[i]+", "+catalogNum[i]));
+                ol.appendChild(option)
+            }
 
-        l.appendChild(ol1);
+            location.appendChild(ol);
+        }
+        else{ 
+            const reponse = document.createElement('p');
+            reponse.appendChild(document.createTextNode("No Courses"));
+            location.appendChild(reponse);
+
+        }
     });
 }
 
 
 function deleteSchedule(){//removes a schedule
-    const l = document.getElementById('schedules').value;
+    const input = {
+        input: document.getElementById('schedules').value
+    } 
     if(document.getElementById('schedules').value!="No Schedules"){
-        fetch('/api/schedule/'+ l, {
+        fetch('/api/schedule/', {
             method: 'DELETE',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify(input)
         })
-        .then(res => console.log(res))
+        .then(res => {
+            if(res.ok) {
+                res.json()
+                .then(data => console.log(data))
+                .catch(err => console.log('failed to delete schedule'))
+            }
+            else{
+                console.log('error: ',res.status)
+            }
+        })
     }
     else{
-        console.log("no schedules to delete")
+        alert("no schedules to delete")
     }
-
     getSchedule();
     displaySchedule()
 }
 
 function deleteAllSchedules(){//removes all schedules stored
-    const l = document.getElementById('schedules');
-    console.log(l.value)
-    fetch('/api/schedule/' , {
+    fetch('/api/schedule/all' , {
         method: 'DELETE',
     })
+    if(document.getElementById('schedules').value=="No Schedules"){
+        alert("no schedules to delete");
+    }
     getSchedule();
     displaySchedule()
 }
 
-function addCourse(){//add a valid course to the current schedule
+function makeSchedule(){//creates a schedule
+    const schedule = {
+        schedule: document.getElementById('schedule-name').value,
+        subject: " ",
+        catalog_nbr: " ",
+    } 
+    if(!(scheduleNames.includes(document.getElementById('schedule-name').value)) && document.getElementById('schedule-name').value!=="" ){
+        fetch('/api/schedule/create',{
+            method: 'POST',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify(schedule)
+        })
+        .then(res => {
+            if(res.ok) {
+                res.json()
+                .then(data => console.log(data))
+                .catch(err => console.log('failed to add course'))
+            }
+            else{
+                console.log('error: ',res.status)
+            }
+        })
+        .catch()
+    }
+    else{
+        alert("schedule already exists or nothing was entered");
+    }
+    getSchedule();
+    displaySchedule();
+}
+
+function checkCourse(){//check if the course being added is a real course
+    var found = false;
     if(document.getElementById('schedules').value!="No Schedules"){
         fetch("/api/courses")
         .then(res => res.json()
@@ -160,23 +194,52 @@ function addCourse(){//add a valid course to the current schedule
             if(document.getElementById('courseSubject').value!=="" && document.getElementById('courseCatalog_nbr').value!==""){
                 data.forEach(e => {
                     if(document.getElementById('courseSubject').value==e.subject && document.getElementById('courseCatalog_nbr').value==e.catalog_nbr){
-                        newCourses.push(e.subject,e.catalog_nbr)
-                        updateSchedule()
+                        addCourse();
+                        found = true;
                     }
                 })
+                if(found==false){
+                    alert("Invalid course");
+                }
             }
             else{
-                const error = document.createElement('li');
-                error.appendChild(document.createTextNode("No courses found"))
-                l.appendChild(error);
+                alert("Invalid course");
             }
         })
         )
     }
     else{
-        console.log("no schedule")
+        console.log("no schedule");
     }
 }
+
+function addCourse(){//updates a schedule
+    const schedule = {
+        schedule: document.getElementById('schedules').value,
+        subject: document.getElementById('courseSubject').value,
+        catalog_nbr: document.getElementById('courseCatalog_nbr').value
+    }
+    fetch('/api/schedule',{
+        method: 'POST',
+        headers: {'Content-type': 'application/json'},
+        body: JSON.stringify(schedule)
+    })
+    .then(res => {
+        if(res.ok) {
+            res.json()
+            .then(data => console.log(data))
+            .catch(err => console.log('failed to add course'))
+        }
+        else{
+            console.log('error: ',res.status)
+        }
+    })
+    .catch()
+    displaySchedule();
+}
+
+
+
 
 
 
@@ -208,16 +271,16 @@ function courseSearch(){//searches through the courses when given certain parame
                     table.appendChild(row);
                     l.appendChild(table);
                     found = true;
-                    if(e.course_info[0].ssr_component=="LAB"){
+                    if(e.course_info[0].ssr_component=="LAB"){//colors lab
                         table.id = "lab";
                     }
-                    if(e.course_info[0].ssr_component=="TUT"){
+                    if(e.course_info[0].ssr_component=="TUT"){//colors tutorials
                         table.id = "tut";
                     }
                 }
             })
         }
-        if(document.getElementById('subject').value!=="" && document.getElementById('catalog_nbr').value!=="" && document.getElementById('ssr_component').value==""){
+        if(document.getElementById('subject').value!=="" && document.getElementById('catalog_nbr').value!=="" && document.getElementById('ssr_component').value==""){//search for timetable when not given course component
             data.forEach(e => {
                 if(document.getElementById('subject').value==e.subject && document.getElementById('catalog_nbr').value==e.catalog_nbr){
                     const course = document.createElement('li');
@@ -227,7 +290,7 @@ function courseSearch(){//searches through the courses when given certain parame
                 }
             })
         }
-        if(document.getElementById('subject').value!=="" && document.getElementById('catalog_nbr').value!=="" && document.getElementById('ssr_component').value!==""){
+        if(document.getElementById('subject').value!=="" && document.getElementById('catalog_nbr').value!=="" && document.getElementById('ssr_component').value!==""){//search for timetable when given course component
             data.forEach(e => {
                 if(document.getElementById('subject').value==e.subject && document.getElementById('catalog_nbr').value==e.catalog_nbr && document.getElementById('ssr_component').value==e.course_info[0].ssr_component){
                     const course = document.createElement('li');
@@ -238,8 +301,7 @@ function courseSearch(){//searches through the courses when given certain parame
             })
         }
         if(found == false && !(document.getElementById('subject').value=="" && document.getElementById('catalog_nbr').value=="" && document.getElementById('ssr_component').value=="")){
-            const error = document.createElement('li');
-            alert("no courses found");
+            const error = document.createElement('p');
             error.appendChild(document.createTextNode("No courses found"))
             l.appendChild(error);
         }

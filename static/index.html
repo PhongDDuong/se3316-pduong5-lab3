@@ -9,27 +9,32 @@
     </head>
     <body>
         <h1>Schedule Maker</h1>
+        <p>Create Schedule:</p>
             <div>
                 <span>
-                    Create Schedule: <input type="text" id ="schedule-name">
-                    <button id="schedule-create">create</button>
+                    
+                    <input type="text" id ="schedule-name" style="float: left;"></input>
+                    <button id="schedule-create" style="float: left;">create</button>
                     Schedule:
-                    <select name=schedules id ="schedules" onchange="displaySchedule()">
-                        <option>Select Schedule</option>
-                    </select>
+                    <select name=schedules id ="schedules" onchange="displaySchedule()"></select>
+                    <br>
+                    <br>
                     <button id="schedule-delete">Delete</button>
                     <button id="schedule-delete-all">Delete All</button>
                 </span>
             </div>
+            <br>
+            <br>
             <div>
                 subject: <input type="text" id ="courseSubject">
                 Course code: <input type="text" id ="courseCatalog_nbr">
                 <button id="add-course">Add Course</button>
             </div>
-            <h2>Classes in Schedule</h2>
-            <ol id="schedule-area"></ol>
+            <h2 id = "subtitle" hidden=true>Classes in Schedule</h2>
+            <ol id="schedule-area" hidden=true></ol>
 
             <div>
+                <h2>Search</h2>
                 <span>
                     subject: <input type="text" id ="subject">
                     Course code: <input type="text" id ="catalog_nbr">
