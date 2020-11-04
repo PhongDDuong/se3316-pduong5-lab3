@@ -82,7 +82,6 @@ function makeSchedule(){
             method: 'PUT',
         })
         getSchedule();
-        displaySchedule()
     }
     else{
         alert("schedule already exists or nothing was entered");
@@ -111,10 +110,13 @@ function displaySchedule(){
         if(data!=""){
             newCourses.push(data);
         }
-        //console.log(newCourses[0][0].split(","));
+        const courseNum = document.createElement('p');
+        courseNum.appendChild(document.createTextNode("Contains "+newCourses[0][0].split(",").length/2 +" courses"));
+        ol1.appendChild(courseNum)
+
         for(i=0;i<newCourses[0][0].split(",").length;i+=2){
             const option = document.createElement('p');
-            option.appendChild(document.createTextNode(newCourses[0][0].split(",")[0]+", "+newCourses[0][0].split(",")[1]));
+            option.appendChild(document.createTextNode(newCourses[0][0].split(",")[i]+", "+newCourses[0][0].split(",")[i+1]));
             ol1.appendChild(option)
         }
 
