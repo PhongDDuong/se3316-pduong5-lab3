@@ -7,7 +7,6 @@ body{
     background-color: grey;
 }
 table, th, td {
-    background: white;
     border: 1px solid black;
     border-collapse: collapse;
     color: black;
@@ -19,9 +18,15 @@ table, th, td {
 table{
     width: 100%;
 }
+#tut {
+    background-color: lightgreen;
+}
+#lab {
+    background-color: lightblue;
+}
 
 ol{
-    background-color: lightgrey;
+    background-color: white;
     color: black;
 }
 div{

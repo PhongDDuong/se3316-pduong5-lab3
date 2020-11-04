@@ -1,2 +1,4 @@
 node_modules
 schedule
+.vscode
+debug.log

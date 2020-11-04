@@ -9,13 +9,6 @@ app.use(express.json());
 
 var store = new Storage('schedule');
 
-const asdasd = {
-  id: "asd", 
-  name: "asddasd"
-}
-store.put('banana', asdasd);
-store.put('hello', "asdasdasdasddas");
-
 const port = process.env.Port || 3000;
 
 
