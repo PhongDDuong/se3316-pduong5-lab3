@@ -114,9 +114,9 @@ router.get('/', (req, res) => {
 //used for input sanitization
 function validateSchedule(schedule){
   const schema = {
-    schedule: Joi.string().required().min(1).max(20),
-    subject: Joi.string().alphanum().required(),
-    catalog_nbr: Joi.string().alphanum().required(),
+    schedule: Joi.string().required().min(1).max(20).regex(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/ , { invert: true }),
+    subject: Joi.string().required().regex(/[`!@#$%^&*()_+\-=\[\]{};':"\\|.<>\/?~]/ , { invert: true }),
+    catalog_nbr: Joi.string().required().regex(/[`!@#$%^&*()_+\-=\[\]{};':"\\|.<>\/?~]/ , { invert: true }),
   };
 
   return result = Joi.validate(schedule, schema);
@@ -125,7 +125,7 @@ function validateSchedule(schedule){
 //input validation
 function validateInput(course){
   const schema = {
-    input: Joi.string().alphanum().min(1).max(20).required()
+    input: Joi.string().alphanum().min(1).max(20).required().regex(/[`!@#$%^&*()_+\-=\[\]{};':"\\|.<>\/?~]/ , { invert: true })
   };
 
   return result = Joi.validate(course, schema);

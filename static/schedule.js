@@ -85,7 +85,8 @@ function displaySchedule(){//shows the courses stored in a schedule
     .then(data => {
         const subtitle = document.getElementById('subtitle');
         const location = document.getElementById('schedule-area');
-        if(data[0].subject!==" "){
+
+        if(data[0].subject!==" " && typeof data[0].subject!== "undefined"){
             location.hidden = false;
             subtitle.hidden = false;
             var subjects = data[0].subject.split(",");
@@ -154,63 +155,74 @@ function deleteAllSchedules(){//removes all schedules stored
 }
 
 function makeSchedule(){//creates a schedule
-    const schedule = {
-        schedule: document.getElementById('schedule-name').value,
-        subject: " ",
-        catalog_nbr: " ",
-    } 
-    if(!(scheduleNames.includes(document.getElementById('schedule-name').value)) && document.getElementById('schedule-name').value!=="" ){
-        fetch('/api/schedule/create',{
-            method: 'POST',
-            headers: {'Content-type': 'application/json'},
-            body: JSON.stringify(schedule)
-        })
-        .then(res => {
-            if(res.ok) {
-                res.json()
-                .then(data => console.log(data))
-                .catch(err => console.log('failed to add course'))
-            }
-            else{
-                console.log('error: ',res.status)
-            }
-        })
-        .catch()
+    if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(document.getElementById('schedule-name').value)){//input validation
+        alert("invalid characters used");
     }
     else{
-        alert("schedule already exists or nothing was entered");
+        const schedule = {
+            schedule: document.getElementById('schedule-name').value,
+            subject: " ",
+            catalog_nbr: " ",
+        } 
+        if(!(scheduleNames.includes(document.getElementById('schedule-name').value)) && document.getElementById('schedule-name').value!=="" ){
+            fetch('/api/schedule/create',{
+                method: 'POST',
+                headers: {'Content-type': 'application/json'},
+                body: JSON.stringify(schedule)
+            })
+            .then(res => {
+                if(res.ok) {
+                    res.json()
+                    .then(data => console.log(data))
+                    .catch(err => console.log('failed to add course'))
+                }
+                else{
+                    console.log('error: ',res.status)
+                }
+            })
+            .catch()
+        }
+        else{
+            alert("schedule already exists or nothing was entered");
+        }
+        getSchedule();
+        displaySchedule();
     }
-    getSchedule();
-    displaySchedule();
 }
 
 function checkCourse(){//check if the course being added is a real course
-    var found = false;
-    if(document.getElementById('schedules').value!="No Schedules"){
-        fetch("/api/courses")
-        .then(res => res.json()
-        .then(data => {
-            const l = document.getElementById("schedule-area");
-            if(document.getElementById('courseSubject').value!=="" && document.getElementById('courseCatalog_nbr').value!==""){
-                data.forEach(e => {
-                    if(document.getElementById('courseSubject').value==e.subject && document.getElementById('courseCatalog_nbr').value==e.catalog_nbr){
-                        addCourse();
-                        found = true;
-                    }
-                })
-                if(found==false){
-                    alert("Invalid course");
-                }
-            }
-            else{
-                alert("Invalid course");
-            }
-        })
-        )
+    if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(document.getElementById('courseSubject').value)||/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(document.getElementById('courseCatalog_nbr').value)){//input validation
+        alert("invalid characters used");
     }
     else{
-        console.log("no schedule");
+        var found = false;
+        if(document.getElementById('schedules').value!="No Schedules"){
+            fetch("/api/courses")
+            .then(res => res.json()
+            .then(data => {
+                const l = document.getElementById("schedule-area");
+                if(document.getElementById('courseSubject').value!=="" && document.getElementById('courseCatalog_nbr').value!==""){
+                    data.forEach(e => {
+                        if(document.getElementById('courseSubject').value==e.subject && document.getElementById('courseCatalog_nbr').value==e.catalog_nbr){
+                            addCourse();
+                            found = true;
+                        }
+                    })
+                    if(found==false){
+                        alert("Invalid course");
+                    }
+                }
+                else{
+                    alert("Invalid course");
+                }
+            })
+            )
+        }
+        else{
+            console.log("no schedule");
+        }
     }
+
 }
 
 function addCourse(){//updates a schedule
@@ -249,10 +261,14 @@ function clearArea(area){//empties section of given location
 }
 
 function courseSearch(){//searches through the courses when given certain parameters
-    var found = false;
+    if(/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(document.getElementById('subject').value)||/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(document.getElementById('catalog_nbr').value)||/[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/.test(document.getElementById('ssr_component').value)){//input validation
+        alert("invalid characters used");
+    }
+    else{
+        var found = false;
 
     clearArea("courses");
-
+    
     fetch("/api/courses")
     .then(res => res.json()
     .then(data => {
@@ -307,4 +323,6 @@ function courseSearch(){//searches through the courses when given certain parame
         }
     })
     )
+    }
+    
 }
